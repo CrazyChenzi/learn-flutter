@@ -8,6 +8,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return new MaterialApp(
       title: 'This is Flutter Title',
+      theme: new ThemeData(
+        primaryColor: Colors.deepPurple,
+      ),
       home: new RandomWords(),
     );
   }
