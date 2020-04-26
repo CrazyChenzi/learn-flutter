@@ -1,106 +1,59 @@
 import 'package:flutter/material.dart';
-import 'package:english_words/english_words.dart';
 
-void main() => runApp(new MyApp());
+// 组件
+import './views/firstPage.dart';
+import './views/secondPage.dart';
+import './views/thirdPage.dart';
 
-class MyApp extends StatelessWidget {
+void main() => runApp(new MaterialApp(
+  home: new MyHomePage(),
+  // routes: ,
+));
+
+class MyHomePage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return new MaterialApp(
-      title: 'This is Flutter Title',
-      theme: new ThemeData(
-        primaryColor: Colors.deepPurple,
-      ),
-      home: new RandomWords(),
-    );
-  }
+  _MyHomePageState createState() => new _MyHomePageState();
 }
 
-class RandomWordsState extends State<RandomWords> {
-  final _suggestions = <WordPair>[];
-  final _biggerFont = const TextStyle(fontSize: 18.0);
-  final _saved = new Set<WordPair>();
-  void _pushSaved() {
-    Navigator.of(context).push(new MaterialPageRoute(
-      builder: (context) {
-        final tiles = _saved.map((pair) {
-          return new ListTile(
-            title: new Text(
-              pair.asPascalCase,
-              style: _biggerFont,
-            ),
-          );
-        });
-        final divided = ListTile.divideTiles(
-          tiles: tiles,
-          context: context,
-        ).toList();
-        return new Scaffold(
-          appBar: new AppBar(
-            title: new Text('This is Navigator of'),
-          ),
-          body: new ListView(children: divided),
-        );
-      },
-    ));
+/// with SingleTickerProviderStateMixin
+
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
+  TabController controller;
+
+  @override
+  void initState() {
+    controller = new TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('This is new AppBar'),
-        // 右侧菜单按钮
-        actions: <Widget>[
-          new IconButton(
-            icon: new Icon(Icons.list),
-            onPressed: _pushSaved,
-          ),
+      body: new TabBarView(
+        controller: controller,
+        children: <Widget>[
+          new FirstPage(),
+          new SecondPage(),
+          new ThirdPage(),
         ],
       ),
-      body: _buildSuggestions(),
-    );
-  }
-
-  Widget _buildSuggestions() {
-    return new ListView.builder(
-      padding: const EdgeInsets.all(16.0),
-      itemBuilder: (context, i) {
-        if (i.isOdd) return new Divider();
-        final index = i ~/ 2;
-        if (index >= _suggestions.length) {
-          _suggestions.addAll(generateWordPairs().take(10));
-        }
-        return _buildRow(_suggestions[index]);
-      },
-    );
-  }
-
-  Widget _buildRow(WordPair pair) {
-    final alreadySaved = _saved.contains(pair);
-    return new ListTile(
-      title: new Text(
-        pair.asPascalCase,
-        style: _biggerFont,
+      bottomNavigationBar: new Material(
+        color: Colors.orangeAccent,
+        child: new TabBar(
+          controller: controller,
+          tabs: <Widget>[
+            new Tab(text: '列表', icon: new Icon(Icons.home)),
+            new Tab(text: '通知', icon: new Icon(Icons.message)),
+            new Tab(text: '我的', icon: new Icon(Icons.cloud))
+          ],
+        ),
       ),
-      trailing: new Icon(
-        alreadySaved ? Icons.favorite : Icons.favorite_border,
-        color: alreadySaved ? Colors.red : null,
-      ),
-      onTap: () {
-        setState(() {
-          if (alreadySaved) {
-            _saved.remove(pair);
-          } else {
-            _saved.add(pair);
-          }
-        });
-      },
     );
   }
-}
-
-class RandomWords extends StatefulWidget {
-  @override
-  RandomWordsState createState() => RandomWordsState();
 }
