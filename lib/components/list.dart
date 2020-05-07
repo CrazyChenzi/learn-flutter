@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:convert';
 
+import 'package:learnflutter/views/Detail.dart';
+
 class ListCard extends StatefulWidget {
   @override
   ListCardState createState() => new ListCardState();
@@ -64,7 +66,8 @@ class ListCardState extends State<ListCard> {
                           new Container(
                             padding:
                                 const EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 2.0),
-                            child: new Text('id' + data[index]['id'].toString()),
+                            child:
+                                new Text('id' + data[index]['id'].toString()),
                           ),
                         ],
                       ),
@@ -75,11 +78,33 @@ class ListCardState extends State<ListCard> {
                   Icons.keyboard_arrow_right,
                   color: Colors.grey,
                 ),
+                onTap: () => _onTap(data[index]['id'].toString()),
               )),
         );
       },
     );
   }
+
+  void _onTap(String id) {
+    Navigator.of(context).push(new PageRouteBuilder(
+        opaque: false,
+        pageBuilder: (BuildContext context, _, __) {
+          return new Detail(id);
+        },
+        transitionsBuilder: (_, Animation<double> animation, __, Widget child) {
+          return new FadeTransition(
+            opacity: animation,
+            child: new SlideTransition(
+              position: new Tween(
+                begin: const Offset(0, 1),
+                end: Offset.zero,
+              ).animate(animation),
+              child: child,
+            ),
+          );
+        }));
+  }
+
   getData() async {
     var url = 'https://jsonplaceholder.typicode.com/posts';
     var httpClient = new HttpClient();

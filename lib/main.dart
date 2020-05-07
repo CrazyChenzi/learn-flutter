@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 import './views/firstPage.dart';
 import './views/secondPage.dart';
 import './views/thirdPage.dart';
+import './views/Detail.dart';
 
 void main() => runApp(new MaterialApp(
   home: new MyHomePage(),
-  // routes: ,
+  routes: <String, WidgetBuilder> {
+    '/detail': (BuildContext context) => new Detail('0')
+  },
 ));
 
 class MyHomePage extends StatefulWidget {
